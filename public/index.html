@@ -1,19 +1,85 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>PokeDex</title>
-  </head>
-  <body>
-    <div id="app">
 
-      
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+  <!-- Import Styles -->
+  <link rel="stylesheet" href="./assets/style.css" />
+  <!-- Import Vue.js -->
+  <script src="https://unpkg.com/vue@3.0.11/dist/vue.global.js"></script>
+  <!-- Import Wrapper -->
+  <script src="https://unpkg.com/pokeapi-js-wrapper/dist/index.js"></script>
+  <title>PokeDex</title>
+</head>
+
+<body>
+  <div id="app">
+  </div>
+
+  <section class="pokemons">
+    <p>An error occured :c</p>
+    <ul id="pokemonList">
+
+    </ul>
+  </section>
+  <script>
+    const P = new Pokedex.Pokedex();
+
+    class Pokemon {
+      constructor(id, name, types, url) {
+        this.name = name;
+        this.id = id;
+        this.types = types;
+        this.url = url;
+      }
+
+      getPokemon(poke) {
+        this.name = poke.name;
+        return this;
+      }
+
+      showPokemon() {
+        let htmlText = "<img src= '" + this.url + "' alt='photo of the pokemon " + this.name + "'/> <h1> " + this.name  + " </h1>";
+        console.log(this);
+        console.log(htmlText);
+        return htmlText;
+      }
+    }
+
+    let interval = {
+      offset: 0,
+      limit: 20,
+    }
+
+    P.getPokemonsList(interval)
+      .then(function (response) {
+        let pokemons = [];
+        let poke = document.getElementById("pokemonList");
+        for (let counter = 0; counter < response.results.length; counter++) {
+          let url = response.results[counter].url;
+          fetch(response.results[counter].url)
+            .then((data) => data.json())
+            .then((resp) => {
+              console.log(resp);
+              let p = new Pokemon(resp.id, resp.name, resp.types, resp.sprites.other["official-artwork"].front_default);
+              pokemons.push(poke);
+              let li = document.createElement('li');
+              li.innerHTML = p.showPokemon();
+              poke.appendChild(li);
+            }
+            )
+          
+        }
+        
 
 
-    </div>
-    <!-- built files will be auto injected -->
-  </body>
+      });
+  </script>
+
+  <!-- built files will be auto injected -->
+</body>
+
 </html>
