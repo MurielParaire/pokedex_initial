@@ -1,11 +1,15 @@
 <template>
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <pokemon_vue />
 </template>
 
 <script>
+import pokemon_vue from './components/Pokemon.vue'
 
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    pokemon_vue 
+  }
 }
 </script>
 

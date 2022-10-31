@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
   <!-- Import Styles -->
-  <link rel="stylesheet" href="./assets/style.css" />
+  <link rel="stylesheet" href="./CSS/style.css" />
   <!-- Import Vue.js -->
   <script src="https://unpkg.com/vue@3.0.11/dist/vue.global.js"></script>
   <!-- Import Wrapper -->
@@ -20,66 +20,14 @@
   </div>
 
   <section class="pokemons">
-    <p>An error occured :c</p>
-    <ul id="pokemonList">
+    <div id="content">
+      <ul id="pokemonList">
 
-    </ul>
+      </ul>
+    </div>
   </section>
-  <script>
-    const P = new Pokedex.Pokedex();
+  <script src="../src/components/Pokemon.vue"></script>
 
-    class Pokemon {
-      constructor(id, name, types, url) {
-        this.name = name;
-        this.id = id;
-        this.types = types;
-        this.url = url;
-      }
-
-      getPokemon(poke) {
-        this.name = poke.name;
-        return this;
-      }
-
-      showPokemon() {
-        let htmlText = "<img src= '" + this.url + "' alt='photo of the pokemon " + this.name + "'/> <h1> " + this.name  + " </h1>";
-        console.log(this);
-        console.log(htmlText);
-        return htmlText;
-      }
-    }
-
-    let interval = {
-      offset: 0,
-      limit: 20,
-    }
-
-    P.getPokemonsList(interval)
-      .then(function (response) {
-        let pokemons = [];
-        let poke = document.getElementById("pokemonList");
-        for (let counter = 0; counter < response.results.length; counter++) {
-          let url = response.results[counter].url;
-          fetch(response.results[counter].url)
-            .then((data) => data.json())
-            .then((resp) => {
-              console.log(resp);
-              let p = new Pokemon(resp.id, resp.name, resp.types, resp.sprites.other["official-artwork"].front_default);
-              pokemons.push(poke);
-              let li = document.createElement('li');
-              li.innerHTML = p.showPokemon();
-              poke.appendChild(li);
-            }
-            )
-          
-        }
-        
-
-
-      });
-  </script>
-
-  <!-- built files will be auto injected -->
 </body>
 
 </html>
