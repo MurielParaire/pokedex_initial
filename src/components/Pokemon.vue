@@ -1,8 +1,3 @@
-
-<template>
-    <h1>Pokedex</h1>
-</template>
-
 <script>
 import Pokemon from '../Pokemon.js'
 
@@ -15,36 +10,36 @@ let interval = {
     limit: 20,
 }
 
+function appendChildren(pokemons) {
+    let poke = document.getElementById("pokemonList");
+    pokemons.sort((poke,mon) => {return poke.id - mon.id});
+    pokemons.forEach(p => {
+        let li = document.createElement('li');
+        li.innerHTML = p.showPokemon();
+        poke.appendChild(li);
+    });
+}
+
 P.getPokemonsList(interval)
     .then(function (response) {
         let pokemons = [];
-        let poke = document.getElementById("pokemonList");
-        console.log(response)
         for (let counter = 0; counter < response.results.length; counter++) {
             fetch(response.results[counter].url)
                 .then((data) => data.json())
                 .then((resp) => {
+                    console.log("resp")
                     console.log(resp)
                     let p = new Pokemon(resp.id, resp.name, resp.types, resp.sprites.other["official-artwork"].front_default);
                     pokemons.push(p);
-                    let li = document.createElement('li');
-                    li.innerHTML = p.showPokemon();
-                    poke.appendChild(li);
+                    if (counter === response.results.length - 1) {
+                        appendChildren(pokemons);
+                    }
                 }
             )
         }
-    });
+        console.log(pokemons)
+        return pokemons;
 
-/*
-    export default {
-    data: () => {
-      return {
-        offset: 0,
-      }
-    },
-    components: {},
-    methods: {}
-  }
-  */
+    });
 
 </script>

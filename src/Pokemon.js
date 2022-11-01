@@ -4,6 +4,7 @@ export default class Pokemon {
         this.id = id;
         this.types = types;
         this.url = url;
+        this.color = this.getBackgroundColor();
     }
 
     getPokemon(poke) {
@@ -53,9 +54,8 @@ export default class Pokemon {
     }
 
     showPokemon() {
-        let htmlText = "<div id='" + this.name + "'> <img src= '" + this.url + "' alt='photo of the pokemon " + this.name + "'/> <p class='textId'>id : " 
+        let htmlText = "<div class='container' id='" + this.name + "'> <img src= '" + this.url + "' alt='photo of the pokemon " + this.name + "'/> <p class='textId'>id : " 
         + this.id + "</p> <h1> " + this.name + " </h1> </div> <style> #" + this.name + "{ background-color: " + this.getBackgroundColor() + ";} </style>";
-        console.log(htmlText)
         return htmlText;
     }
 
