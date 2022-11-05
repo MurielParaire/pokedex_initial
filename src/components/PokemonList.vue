@@ -1,12 +1,11 @@
 <template>
     <h1>Pokedex</h1>
     <section class="pokemons">
-    <button @click=this.get20Pokemons()>Click to add !</button>
-    <div id="content">
-        <div class="pokes" v-for="pokemon in this.$data.pokemonList" :key="pokemon.id">{{ this.appendChild(pokemon)}}</div>
-        <ul id="pokemonList"></ul>
-    </div>
-</section>
+        <button @click=this.get20Pokemons()>Click to add !</button>
+        <div id="content">
+            <ul id="pokemonList"></ul>
+        </div>
+    </section>
 </template>
 
 <script>
@@ -48,17 +47,22 @@ export default {
             let p = new Pokemon(resp.id, resp.name, resp.types, resp.sprites.other["official-artwork"].front_default);
             this.$data.pokemonList.push(p);
             if (last === true) {
-                //this.appendChildren();
+                this.appendChildren();
             }
         },
-        appendChild(p) {
+        appendChildren() {
             let poke = document.getElementById("pokemonList");
-            let li = document.createElement('li');
-            li.innerHTML = p.showPokemon();
-            poke.appendChild(li);
+            for (let counter = this.$data.offset; counter < this.$data.pokemonList.length; counter = counter + 1) {
+                let li = document.createElement('li');
+                let p = this.$data.pokemonList[counter];
+                console.log(p)
+                li.innerHTML = p.showPokemon();
+                poke.appendChild(li);
+            }
+            this.updateOffset()
         }
 
-    }, 
+    },
     mounted() {
         this.get20Pokemons()
     }
