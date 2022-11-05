@@ -13,7 +13,6 @@ export default class Pokemon {
     }
 
     getBackgroundColor() {
-        console.log(this.types);
         if (this.types[0].type.name === 'grass')
             return 'rgb(153, 233, 142)'
         if (this.types[0].type.name === 'normal')
@@ -54,7 +53,7 @@ export default class Pokemon {
     }
 
     showPokemon() {
-        let htmlText = "<div class='container' id='" + this.name + "'> <img src= '" + this.url + "' alt='photo of the pokemon " + this.name + "'/> <p class='textId'>id : " 
+        let htmlText = "<div class='container' id='" + this.name + "' :key='" + this.id + "'> <img src= '" + this.url + "' alt='photo of the pokemon " + this.name + "'/> <p class='textId'>id : " 
         + this.id + "</p> <h1> " + this.name + " </h1> </div> <style> #" + this.name + "{ background-color: " + this.getBackgroundColor() + ";} </style>";
         return htmlText;
     }

@@ -1,5 +1,5 @@
 <script>
-import Pokemon from '../Pokemon.js'
+/*import Pokemon from '../Pokemon.js'
 
 const Pokedex = require("pokeapi-js-wrapper")
 const P = new Pokedex.Pokedex();
@@ -22,7 +22,6 @@ function appendChildren(pokemons) {
 
 P.getPokemonsList(interval)
     .then(function (response) {
-        let pokemons = [];
         for (let counter = 0; counter < response.results.length; counter++) {
             fetch(response.results[counter].url)
                 .then((data) => data.json())
@@ -30,16 +29,18 @@ P.getPokemonsList(interval)
                     console.log("resp")
                     console.log(resp)
                     let p = new Pokemon(resp.id, resp.name, resp.types, resp.sprites.other["official-artwork"].front_default);
-                    pokemons.push(p);
+                    pokemonList.push(p);
                     if (counter === response.results.length - 1) {
-                        appendChildren(pokemons);
+                        appendChildren(pokemonList);
                     }
                 }
             )
         }
-        console.log(pokemons)
-        return pokemons;
+        console.log(pokemonList)
+        return pokemonList;
 
     });
 
+
+*/
 </script>

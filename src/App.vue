@@ -1,14 +1,14 @@
 <template>
-  <pokemon_vue />
+  <pokemon_list />
 </template>
 
 <script>
-import pokemon_vue from './components/Pokemon.vue'
+import pokemon_list from './components/PokemonList.vue'
 
 export default {
   name: 'App',
   components: {
-    pokemon_vue 
+    pokemon_list 
   }
 
 }
