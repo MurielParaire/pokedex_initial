@@ -73,7 +73,63 @@ h1 {
     text-decoration: solid;
 }
 
-.bulbasaur {
-    background-color: antiquewhite;
+
+/* background color for all different pokemon types */
+.grass {
+    background-color: rgb(153, 233, 142);
+}
+
+.normal {
+    background-color: rgb(202, 202, 202);
+}
+
+.poison {
+    background-color: rgb(234, 176, 255);
+}
+
+.fire {
+    background-color: rgb(255, 191, 150);
+}
+.bug {
+    background-color: rgb(100, 172, 98);
+}
+.water {
+    background-color: rgb(150, 213, 255);
+}
+.flying {
+    background-color: rgb(146, 230, 235);
+}
+.electric {
+    background-color: rgb(235, 235, 146);
+}
+.ground {
+    background-color: rgb(236, 211, 141);
+}
+.fairy {
+    background-color: rgb(248, 185, 255);
+}
+.fighting {
+    background-color: rgb(194, 166, 123);
+}
+.psychic {
+    background-color: rgb(200, 149, 203);
+}
+.rock {
+    background-color: rgb(152, 131, 104);
+}
+.ghost {
+    background-color: rgb(169, 114, 182);
+}
+.ice {
+    background-color: rgb(138, 191, 226);
+}
+.dragon {
+    background-color: rgb(209, 76, 76);
+}
+.dark {
+    background-color: rgb(67, 65, 65);
+}
+.steel {
+    background-color: rgb(118, 118, 118);
 }
 

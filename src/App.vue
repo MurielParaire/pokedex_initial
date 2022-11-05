@@ -8,7 +8,7 @@ import pokemon_list from './components/PokemonList.vue'
 export default {
   name: 'App',
   components: {
-    pokemon_list 
+    pokemon_list
   }
 
 }

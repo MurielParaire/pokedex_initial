@@ -1,5 +1,5 @@
 <template>
-    <h1>{{pokemon.name}}</h1>
+    <h1>{{this.pokemon.name}}</h1>
 </template>
 
 
