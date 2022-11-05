@@ -1,10 +1,8 @@
 <template>
     <h1>Pokedex</h1>
     <section class="search">
-        <div class="searchbar">
-            <input type="text" placeholder="Artikodin">
-            <span></span>
-        </div>
+        <input id='searchbar' type="text" placeholder="Artikodin" v-model="search">
+        <button @click=this.searchPokemon()>Search</button>
     </section>
     <section class="pokemons">
         <div id="content">
@@ -41,13 +39,15 @@ export default {
             pokemonList: [],
             offset: 0,
             data: {},
-            id: 0
+            id: 0,
+            search: ''
         }
     },
     methods: {
         tell(pokemon) {
             console.log(pokemon)
             console.log(pokemon.id)
+            console.log(this.$data.search)
         },
         updateOffset() {
             console.log(this.$data.offset)
@@ -55,9 +55,12 @@ export default {
             console.log(this.$data.offset)
         },
         async get20Pokemons() {
+            if (this.$data.pokemonList.length < 20) {
+                this.$data.pokemonList = [];
+            }
             let interval = { offset: this.$data.offset, limit: 20 }
             console.log(interval)
-            let response = await P.getPokemonsList(interval)
+            let response = await P.getPokemonsList(interval);
             for (let counter = 0; counter < response.results.length; counter++) {
                 let fetchResult = await fetch(response.results[counter].url);
                 let data = await fetchResult.json();
@@ -92,9 +95,27 @@ export default {
         },
         */
         getID(id) {
-            console.log(this.id);
             this.$data.id = id;
             console.log(this.$data.id)
+        },
+
+        async searchPokemon() {
+            let pokemon = await P.getPokemonByName(this.$data.search);
+            console.log('s')
+            console.log(pokemon)
+            console.log('d')
+            if (typeof(pokemon) !== 'string') {
+                console.log('p')
+                console.log(pokemon)
+            }
+            let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
+            this.$data.pokemonList = [p];
+            this.$data.offset = 0;
+            console.log(this.$data.pokemonList)
+        },
+
+        handlefetchError() {
+            alert('Oh non ! Il semble que les pokemons sont parties prendre une pause et ne sont pas disponible en ce moment :c')
         }
 
     },
