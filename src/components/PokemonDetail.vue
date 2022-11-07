@@ -1,4 +1,5 @@
 <template>
+    
      <section class="contentDetails">
         <button @click="finishedDetail" class="returnButton">Retour</button>
         <h1 @click="getPId()" id="titre"> {{ this.$data.pokemon.name }} </h1>
@@ -6,21 +7,29 @@
         <div class="aroundContent">
             <div id="generalInformation">
                 <div id="general">
-                    <p>species : {{pokemon.species}}</p>
-                    <p>weight : {{pokemon.weight}}</p>
-                    <p>base experience : {{pokemon.base_experience}}</p>
-                    <p>height : {{pokemon.height}}</p>
+                    <p class="species"><span class='attributes'>species : </span>{{pokemon.species}}</p>
+                    <p class='weight'><span class='attributes'>weight : </span> {{pokemon.weight}}</p>
+                    <p class='experience'><span class='attributes'>base experience : </span> {{pokemon.base_experience}}</p>
+                    <p class='height'><span class='attributes'>height : </span> {{pokemon.height}}</p>
                 </div>
                 <div id="specific">
-                    <p>abilities : {{pokemon.abilities}}</p>
-                    <p>forms : {{pokemon.forms}}</p>
+                    <p><span class='attributes specificattr'>abilities : </span>
+                        <ul v-for="ability in this.$data.pokemon.abilities" :key="ability" class="ability"><li class="abilities">{{ability}}</li></ul></p>
+                    <p><span class='attributes'>forms : </span>{{pokemon.forms}}</p>
                 </div>
-                <div id="stats">{{pokemon.stats}}</div>
+                <div id="stats">{{pokemon.stats}}
+
+                </div>
             </div>
 
 
 
             <img :src="this.$data.pokemon.url" alt="An image of {{this.$data.pokemon.name}}" id="detailImage" />
+            <div id="types"
+                v-for="(index, type) in this.$data.pokemon.types"
+                :key="index">
+                <span class="type" v-bind:class=pokemon.types[0].type.name >{{this.$data.pokemon.types[type].type.name}}</span>
+            </div>
         </div> 
    </section>
 </template>
@@ -30,6 +39,7 @@
 const Pokedex = require("pokeapi-js-wrapper")
 const P = new Pokedex.Pokedex();
 import Pokemon from '../Pokemon.js'
+
 
 export default {
     name: "pokemon_detail",
@@ -69,9 +79,9 @@ export default {
             });
             this.$data.pokemon = p;
             console.log(p);
-        },
-
-
+            console.log(Object.keys(this.$data.pokemon.types))
+            console.log(this.$data.pokemon.types[0])
+        }
 
     },
     props: {

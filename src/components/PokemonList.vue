@@ -1,6 +1,7 @@
 <template>
     <h1>Pokedex</h1>
     <section class="search">
+        <button @click="finishedSearch">Retour</button>
         <input id='searchbar' type="text" placeholder="Artikodin" v-model="search">
         <button @click=this.searchPokemon()>Search</button>
     </section>
@@ -100,6 +101,10 @@ export default {
 
         handlefetchError() {
             alert('Oh non ! Il semble que les pokemons sont parties prendre une pause et ne sont pas disponible en ce moment :c')
+        },
+
+        finishedSearch() {
+            this.get20Pokemons()
         }
 
     },

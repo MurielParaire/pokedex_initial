@@ -1,7 +1,11 @@
+/* CSS style for the pokedex */
+
+/* general background-color and style */
 * {
-    background-color: lightgray;
+    background-color: rgb(239, 239, 239);
 }
 
+/* settings for component : PokemonList */
 #pokemonList {
     display: grid;
     column-gap: 15px;
@@ -91,6 +95,8 @@ h1 {
     margin-left: auto;
     margin-right: auto;
     justify-content: center;
+    padding: 2%;
+    border-radius: 5%;
 }
 
 p {
@@ -105,6 +111,16 @@ p {
 #detailImage {
     grid-row: 1;
     grid-column: 2;
+}
+
+#types {
+    grid-row: 2;
+    grid-column: 2;
+    background-color: transparent;
+}
+
+.type {
+    padding: 5px;
 }
 
 #titre {
@@ -123,10 +139,6 @@ p {
     grid-column: 1;
 }
 
-#general {
-    background-color: whitesmoke;
-}
-
 #specific {
     background-color: transparent;
 }
@@ -135,6 +147,56 @@ p {
     background-color: transparent;
 }
 
+.attributes {
+    background-color: transparent;
+    font-weight: bolder;
+}
+
+#general {
+    display: grid;
+    background-color: transparent;
+    margin-top: 10%;
+}
+
+.species {
+    grid-row: 1;
+    grid-column: 1;
+}
+
+.weight {
+    grid-row: 1;
+    grid-column: 2;
+}
+.experience {
+    grid-row: 2;
+    grid-column: 1;
+}
+.height {
+    grid-row: 2;
+    grid-column: 2;
+}
+
+.abilities {
+    border: 0%;
+    background-color: transparent;
+    border: 0;
+    list-style: square;
+    display:list-item;
+    text-align: left;
+}
+
+.ability {
+    justify-content: left;
+    background-color: transparent;
+}
+
+#specific {
+    text-align: left;
+}
+
+.specificattr {
+    text-align: left;
+}
 
 /* background color for all different pokemon types */
 .grass {
