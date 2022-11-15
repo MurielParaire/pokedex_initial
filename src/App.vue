@@ -1,10 +1,13 @@
 <template>
+  <!-- Our pokemon general page -->
   <pokemon_general />
 </template>
 
 <script>
+//importing the component
 import pokemon_general from './components/PokemonGeneral.vue'
 
+//exporting our app
 export default {
   name: 'App',
   components: {
@@ -15,12 +18,11 @@ export default {
 </script>
 
 <style>
+
+/*defining the general style of our application */
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 4%;
 }
 </style>

@@ -6,11 +6,35 @@
 }
 
 /* settings for component : PokemonList */
+
+/* tiles */
 #pokemonList {
     display: grid;
     column-gap: 15px;
     row-gap: 20px;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+  
+  /* CSS */
+.addPokemonButton {
+    opacity: 0.9;
+    background-color: #3D7DCA;
+    color: #FFCB05;
+    display: inline-block;
+    padding: 7px 20px;
+    text-align: center;
+    transition: all 0.5s;
+    border: 0;
+    font-size:larger;
+    font-weight: bold;
+  }
+
+  /*GH?NO!GL!pw4958*/
+  
+.addPokemonButton:hover {
+    opacity: 1;
+    box-shadow: #003A70 0 -25px 18px -14px inset,#003A70 0 1px 2px,#003A70 0 2px 4px,#003A70 0 4px 8px,#003A70 0 8px 16px,rgba(44,187,99,.25) 0 16px 32px;
+    transform: scale(1.05);
   }
 
 img {
@@ -81,12 +105,15 @@ h1 {
 /* Detail page */
 
 .returnButton {
+    display: flex;
+    justify-self: left;
+}
+
+.return {
     text-align: center;
     border: 0;
     text-decoration: underline;
     background-color: transparent;
-    display: flex;
-    justify-self: left;
 }
 
 .contentDetails {
@@ -117,6 +144,8 @@ p {
     grid-row: 2;
     grid-column: 2;
     background-color: transparent;
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .type {
@@ -143,9 +172,10 @@ p {
     background-color: transparent;
 }
 
-#stats {
-    background-color: transparent;
+#specific p {
+    margin-left: 40%;
 }
+
 
 .attributes {
     background-color: transparent;
@@ -158,23 +188,45 @@ p {
     margin-top: 10%;
 }
 
-.species {
-    grid-row: 1;
-    grid-column: 1;
+#stats {
+    display: grid;
+    background-color: transparent;
 }
 
-.weight {
+.species, #hp {
+    grid-row: 1;
+    grid-column: 1;
+    background-color: transparent;
+}
+
+.weight, #attack {
     grid-row: 1;
     grid-column: 2;
+    background-color: transparent;
 }
-.experience {
+
+#defense {
+    grid-row: 1;
+    grid-column: 3;
+    background-color: transparent;
+}
+
+.experience, #special-attack {
     grid-row: 2;
     grid-column: 1;
+    background-color: transparent;
 }
-.height {
+.height, #special-defense {
     grid-row: 2;
     grid-column: 2;
+    background-color: transparent;
 }
+#speed {
+    grid-row: 2;
+    grid-column: 3;
+    background-color: transparent;
+}
+
 
 .abilities {
     border: 0%;
@@ -198,62 +250,85 @@ p {
     text-align: left;
 }
 
+.transparent {
+    background-color: transparent;
+}
+
 /* background color for all different pokemon types */
 .grass {
-    background-color: rgb(153, 233, 142);
+    background-color: #77cc55;
+    opacity: 0.9;
 }
 
 .normal {
-    background-color: rgb(202, 202, 202);
+    background-color: #aaaa99;
+    opacity: 0.9;
 }
 
 .poison {
-    background-color: rgb(234, 176, 255);
+    background-color: #aa5599;
+    opacity: 0.9;
 }
 
 .fire {
-    background-color: rgb(255, 191, 150);
+    background-color: #ec4225;
+    opacity: 0.9;
 }
 .bug {
-    background-color: rgb(100, 172, 98);
+    background-color: #aabb22;
+    opacity: 0.9;
 }
 .water {
-    background-color: rgb(150, 213, 255);
+    background-color: #4e9aff;
+    opacity: 0.9;
 }
 .flying {
-    background-color: rgb(146, 230, 235);
+    background-color: #8899ff;
+    opacity: 0.9;
 }
 .electric {
-    background-color: rgb(235, 235, 146);
+    background-color: #f5cc34;
+    opacity: 0.9;
 }
 .ground {
-    background-color: rgb(236, 211, 141);
+    background-color: #ddbb55;
+    opacity: 0.9;
 }
 .fairy {
-    background-color: rgb(248, 185, 255);
+    background-color: #ee99ee;
+    opacity: 0.9;
 }
 .fighting {
-    background-color: rgb(194, 166, 123);
+    background-color: #bb5545;
+    opacity: 0.9;
 }
 .psychic {
-    background-color: rgb(200, 149, 203);
+    background-color: #ee5499;
+    opacity: 0.9;
 }
 .rock {
-    background-color: rgb(152, 131, 104);
+    background-color: #bbaa66;
+    opacity: 0.9;
 }
 .ghost {
-    background-color: rgb(169, 114, 182);
+    background-color: #6667bc;
+    opacity: 0.9;
 }
 .ice {
-    background-color: rgb(138, 191, 226);
+    background-color: #66ccff;
+    opacity: 0.9;
 }
 .dragon {
-    background-color: rgb(209, 76, 76);
+    background-color: #7867ee;
+    opacity: 0.9;
 }
 .dark {
-    background-color: rgb(67, 65, 65);
+    background-color: #775544;
+    opacity: 0.9;
+    color: whitesmoke;
 }
 .steel {
-    background-color: rgb(118, 118, 118);
+    background-color: #aaaabb;
+    opacity: 0.9;
 }
 
