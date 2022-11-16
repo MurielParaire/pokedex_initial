@@ -13,22 +13,22 @@
         <div class="aroundContent">
             <div id="generalInformation">
                 <div id="general">
-                    <p class="species"><span class='attributes'>species : </span>{{ pokemon.species }}</p>
-                    <p class='weight'><span class='attributes'>weight : </span> {{ pokemon.weight }} kg</p>
-                    <p class='experience'><span class='attributes'>base experience : </span> {{ pokemon.base_experience
+                    <p class="species"><span class='attributes'> {{this.$data.current[0]}} : </span>{{ pokemon.species }}</p>
+                    <p class='weight'><span class='attributes'>{{this.$data.current[1]}} : </span> {{ pokemon.weight }} kg</p>
+                    <p class='experience'><span class='attributes'>{{this.$data.current[2]}} : </span> {{ pokemon.base_experience
                     }}
                     </p>
-                    <p class='height'><span class='attributes'>height : </span> {{ pokemon.height }} m</p>
+                    <p class='height'><span class='attributes'>{{this.$data.current[3]}} : </span> {{ pokemon.height }} m</p>
                 </div>
                 <br>
                 <div id="stats">
-                    <div v-for="stat in this.$data.pokemon.stats" :key="stat[0]" :id="stat[0]">
-                        <p ><span class='attributes'>{{ stat[0] }} : </span> {{ stat[1] }}</p>
+                    <div v-for="(stat, index) in this.$data.pokemon.stats" :key="stat[0]" :id="stat[0]">
+                        <p ><span class='attributes'>{{ this.$data.current[4 + index] }} : </span> {{ stat[1] }}</p>
                     </div>
                 </div>
                 <br>
                 <div id="specific">
-                    <p><span class='attributes specificattr'>abilities : </span>
+                    <p><span class='attributes specificattr'> {{this.$data.current[this.$data.current.length - 1]}} : </span>
                     <ul v-for="ability in this.$data.pokemon.abilities" :key="ability" class="ability">
                         <li class="abilities">{{ ability }}</li>
                     </ul>
@@ -64,7 +64,10 @@ export default {
             pokemon: {},
             evolutionsNames: [],
             evolutionsIds: [],
-            evolutionsSprites: []
+            evolutionsSprites: [],
+            En: ['species', 'weight', 'base experience', 'height', 'Hit Points', 'Attack', 'Defense', 'Special Attack', 'Special Defense', 'Speed', 'Abilities'],
+            Fr: ['espèce', 'poids', 'expérience de base', 'hauteur', 'Points de Vie', 'Attaque', 'Défense', 'Attaque spéciale', 'Défense spéciale', 'Vitesse', 'Abilités'],
+            current: 'nothing'
         }
     },
     methods: {
@@ -73,7 +76,7 @@ export default {
         },
 
         async getPokemon() {
-            let pokemon = await P.getPokemonByName(this.id);
+            let pokemon = await P.getPokemonByName(this.id).catch(console.log('hi'));
             let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
             p.weight = pokemon.weight;
             p.abilities = [];
@@ -126,7 +129,23 @@ export default {
             required: true
         }
     },
+    watch: {
+        language: function(lan) {
+            if (lan === 'en') {
+                this.$data.current = this.$data.En;
+            }
+            else {
+                this.$data.current = this.$data.Fr;
+            }
+        }
+    },
     mounted() {
+        if (this.$props.language === 'en') {
+                this.$data.current = this.$data.En;
+            }
+            else {
+                this.$data.current = this.$data.Fr;
+            }
         this.getPokemon()
     }
 }
