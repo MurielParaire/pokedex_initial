@@ -41,11 +41,16 @@
 
 
             <img :src="this.$data.pokemon.url" alt="An image of {{this.$data.pokemon.name}}" id="detailImage" />
-            <div id="types">
+            <section id="types" v-if="this.$props.language === 'en'">
                 <div v-for="type in this.$data.pokemon.types" :key="type">
                     <span class="type" v-bind:class=type.type.name>{{ type.type.name }}</span>
                 </div>
-            </div>
+            </section>
+            <section id="types" v-else>
+                <div v-for="type in this.$data.pokemon.types" :key="type">
+                    <span class="type" v-bind:class=type.type.name>{{ type.type.frenchName }}</span>
+                </div>
+            </section>
         </div>
     </section>
 </template>
@@ -66,7 +71,7 @@ export default {
             evolutionsIds: [],
             evolutionsSprites: [],
             En: ['species', 'weight', 'base experience', 'height', 'Hit Points', 'Attack', 'Defense', 'Special Attack', 'Special Defense', 'Speed', 'Abilities'],
-            Fr: ['espèce', 'poids', 'expérience de base', 'hauteur', 'Points de Vie', 'Attaque', 'Défense', 'Attaque spéciale', 'Défense spéciale', 'Vitesse', 'Abilités'],
+            Fr: ['espèce', 'poids', 'expérience de base', 'taille', 'Points de Vie', 'Attaque', 'Défense', 'Attaque spéciale', 'Défense spéciale', 'Vitesse', 'Talents'],
             current: 'nothing'
         }
     },
@@ -76,7 +81,7 @@ export default {
         },
 
         async getPokemon() {
-            let pokemon = await P.getPokemonByName(this.id).catch(console.log('hi'));
+            let pokemon = await P.getPokemonByName(this.id).catch((err) => console.log(err));
             let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
             p.weight = pokemon.weight;
             p.abilities = [];
@@ -115,6 +120,19 @@ export default {
                 this.$data.evolutionsNames.push(evolution.name)
                 this.$data.evolutionsSprites.push(evolution.url)
             }
+        },
+        //changing the variables to the good ones for the current language
+        async changeLanguage() {
+            if (this.$props.language === 'en') {
+                this.$data.current = this.$data.En;
+            }
+            else {
+                this.$data.current = this.$data.Fr;
+                for (let index = 0; index < this.$data.pokemon.types.length; index++) {
+                    let frtype = await P.getTypeByName(this.$data.pokemon.types[index].type.name).catch((err) => console.log(err));
+                    this.$data.pokemon.types[index].type.frenchName = frtype.names[3].name;
+                }
+            }
         }
 
     },
@@ -130,23 +148,13 @@ export default {
         }
     },
     watch: {
-        language: function(lan) {
-            if (lan === 'en') {
-                this.$data.current = this.$data.En;
-            }
-            else {
-                this.$data.current = this.$data.Fr;
-            }
+        language: function() {
+            this.changeLanguage()
         }
     },
-    mounted() {
-        if (this.$props.language === 'en') {
-                this.$data.current = this.$data.En;
-            }
-            else {
-                this.$data.current = this.$data.Fr;
-            }
-        this.getPokemon()
+    async mounted() {
+        await this.getPokemon()
+        this.changeLanguage()
     }
 }
 </script>

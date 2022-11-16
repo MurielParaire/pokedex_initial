@@ -6,7 +6,7 @@
         <!-- search bar -->
         <input id='searchbar' type="text" placeholder="Pikachu" v-model="search">
         <!-- search button => enter information from the search bar -->
-        <button @click=this.searchPokemon()>Search</button>
+        <button id="searchButton" @click=this.searchPokemon()>Search</button>
     </section>
     <section class="search" v-else>
         <!-- return button -->
@@ -14,7 +14,7 @@
         <!-- search bar -->
         <input id='searchbar' type="text" placeholder="Artikodin" v-model="search">
         <!-- search button => enter information from the search bar -->
-        <button @click=this.searchPokemon()>Chercher</button>
+        <button id="searchButton" @click=this.searchPokemon()>Chercher</button>
     </section>
     
     <!-- pokemon list -->
@@ -102,7 +102,7 @@ export default {
                 })
             //for each pokemon we need to get its name, id and image
             for (let counter = 0; counter < response.results.length; counter++) {
-                let fetchResult = await fetch(response.results[counter].url);
+                let fetchResult = await fetch(response.results[counter].url).catch((err) => console.log(err));
                 let data = await fetchResult.json();
                 if (counter === response.results.length - 1) {
                     this.getPokemon(data)
@@ -118,7 +118,7 @@ export default {
         getPokemon(response) {
             let resp = response
             let p = new Pokemon(resp.id, resp.name, resp.types, resp.sprites.other["official-artwork"].front_default);
-            p.frenchName = this.$data.pokemonNames[p.id].frenchName
+            p.frenchName = this.$data.pokemonNames[resp.id].frenchName
             this.$data.pokemonList.push(p);
         },
 
@@ -155,7 +155,7 @@ export default {
             }
             console.log('n')
             console.log(name)
-            let pokemon = await P.getPokemonByName(name);
+            let pokemon = await P.getPokemonByName(name).catch((err) => console.log(err));
             let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
             p.frenchName = this.$data.pokemonNames[p.id].frenchName
             this.$data.pokemonList = [p];
@@ -173,7 +173,7 @@ export default {
         },
 
         async getNamesFrench() {
-            let names = await fetch("https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_species_names.csv")
+            let names = await fetch("https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_species_names.csv").catch((err) => console.log(err))
             let res = await names.text()
             const json = await csvToJson({
                 delimiter: ','
