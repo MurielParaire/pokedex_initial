@@ -5,6 +5,37 @@
     background-color: #c8dbf2;
 }
 
+html {
+    scroll-behavior: smooth;
+  }
+
+.selected {
+    border-bottom: 1px solid;
+}
+
+#language {
+    display: flex;
+    justify-content: right;
+    background-color: transparent;
+}
+
+#language span {
+    border-left: 1px solid;
+    padding-right: 1rem;
+    margin-left: 0;
+    background-color: transparent;
+}
+
+.languageFlag {
+    max-width: 40px;
+    max-height: 40px;
+    display: flex;
+    margin:0;
+    margin-right: 1%;
+    margin-top: 1%;
+    padding-bottom: 1rem;
+}
+
 .yellow {
     color: #FFCB05;
     font-size: 50px;
@@ -21,7 +52,7 @@
     background-color: #3D7DCA;
     padding-bottom: 2%;
     margin-bottom: 1%;
-    
+   
 }
 
 /* settings for component : PokemonList */
@@ -48,13 +79,20 @@
     font-weight: bold;
   }
 
-  /*GH?NO!GL!pw4958*/
+  /**/
   
 .addPokemonButton:hover {
     opacity: 1;
     box-shadow: #003A70 0 -25px 18px -14px inset,#003A70 0 1px 2px,#003A70 0 2px 4px,#003A70 0 4px 8px,#003A70 0 8px 16px,rgba(44,187,99,.25) 0 16px 32px;
     transform: scale(1.05);
   }
+
+
+#searchbar {
+    background-color: transparent;
+    border-color: #3D7DCA;
+}
+
 
 /* search button */
 
@@ -66,6 +104,7 @@
     font-size: medium;
     font-weight: bold;
     border: 0;
+    margin-left: 0.4%;
   }
   
   #searchButton:hover {
@@ -87,7 +126,7 @@
   }
   
   #searchButton:hover::before {
-    transform: scaleX(1.1);
+    transform: scaleX(0.9);
   }
   
 

@@ -24,7 +24,7 @@
                 <article
                 v-for="pokemon in this.pokemonList"
                 :key="pokemon.id"
-                @click="setPokemonId(pokemon.id, pokemon.frenchName)">
+                @click="setPokemonId(pokemon)">
                     <li>
                         <div class="container" 
                         v-bind:id=pokemon.name 
@@ -61,7 +61,7 @@ import csvToJson from 'csvtojson';
 //export our app
 export default {
     name:"pokemon_list",
-    emits: ['getPokemonId', 'getPokemonName'],
+    emits: ['getPokemonId', 'getPokemonName', 'getPokemonInfo'],
     props : {
         language : {
             required: true
@@ -90,12 +90,17 @@ export default {
         },
         //gets the next 20 pokemon from the api
         async get20Pokemons() {
-            //buttonAdd.style.visibility = 'hidden' / 'visible'
             //if the user has searched for a pokemon, we need to clear the list before adding the first 20 or it will appear twice
             if (this.$data.pokemonList.length < 20) {
                 this.$data.pokemonList = [];
             }
             let interval = { offset: this.$data.offset, limit: 20 }
+            if (this.$data.offset === 905) {
+                return 0;
+            }
+            if (this.$data.offset > 885) {
+                interval.limit = 905 - this.$data.offset;
+            }
             //getting the next 20 pokemon
             let response = await P.getPokemonsList(interval).catch( (err) => {
                 console.log(err);
@@ -104,67 +109,51 @@ export default {
             for (let counter = 0; counter < response.results.length; counter++) {
                 let fetchResult = await fetch(response.results[counter].url).catch((err) => console.log(err));
                 let data = await fetchResult.json();
-                if (counter === response.results.length - 1) {
-                    this.getPokemon(data)
-                }
-                else {
-                    this.getPokemon(data);
-                }
+                this.getPokemon(data);
             }
             this.updateOffset()
             this.getNamesFrench()
         },
         
         getPokemon(response) {
-            let resp = response
-            let p = new Pokemon(resp.id, resp.name, resp.types, resp.sprites.other["official-artwork"].front_default);
-            p.frenchName = this.$data.pokemonNames[resp.id].frenchName
+            if (this.$data.pokemonNames.length < 2) {
+                this.getNamesFrench()
+            }
+            console.log(response.id)
+            let p = new Pokemon(response.id, response.name, response.types, response.sprites.other["official-artwork"].front_default);
+            p.frenchName = this.$data.pokemonNames[response.id].frenchName
             this.$data.pokemonList.push(p);
         },
 
-        setPokemonId(id, name) {
-            this.$emit('getPokemonId', id);
-            this.$emit('getPokemonName', name)
+        setPokemonId(pokemon) {
+            pokemon.espece = this.$data.pokemonNames[pokemon.id].espece;
+            pokemon.species = this.$data.pokemonNames[pokemon.id].species;
+            this.$emit('getPokemonInfo', pokemon)
         },
 
         async searchPokemon() {
             let name = this.$data.search.toLowerCase() ;
+            if (name === '') {
+                return 0
+            }
             let x = parseInt(name)
-            console.log(x.toString()) 
-            console.log(name) 
-            console.log(x) 
-            console.log(typeof(x)) 
             if (this.$props.language === 'fr') {
-                console.log(x)
                 if (x.toString() === 'NaN') {
-                    console.log('e')
                     var result = this.$data.pokemonNames.find(n => {
-                        console.log(n)
-                        if (n.id === 1) {
-                            console.log(n)
-                            console.log(name)
-                        }
                         return n.frenchName === name;
                     })
                     if (result === undefined) {
                         return 0;
                     }
-                    console.log(result)
                     name = result.englishName;
                 }
             }
-            console.log('n')
-            console.log(name)
             let pokemon = await P.getPokemonByName(name).catch((err) => console.log(err));
             let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
             p.frenchName = this.$data.pokemonNames[p.id].frenchName
             this.$data.pokemonList = [p];
             this.$data.offset = 0;
             this.$data.inSpecific = true
-        },
-
-        handlefetchError() {
-            alert('Oh non ! Il semble que les pokemons sont parties prendre une pause et ne sont pas disponible en ce moment :c')
         },
 
         finishedSearch() {
@@ -183,10 +172,11 @@ export default {
                 //get good lines
                 
                 if (json[counter].local_language_id === '5') {
-                    name = {'id': json[counter].pokemon_species_id, 'frenchName': json[counter].name.toLowerCase() };
+                    name = {'id': json[counter].pokemon_species_id, 'frenchName': json[counter].name.toLowerCase(), 'espece': json[counter].genus };
                 }
                 else if (json[counter].local_language_id === '9') {
                     name.englishName = json[counter].name.toLowerCase() ;
+                    name.species = json[counter].genus;
                 }
                 else if (json[counter].local_language_id === '11') {
                     this.$data.pokemonNames.push(name);
@@ -197,9 +187,10 @@ export default {
 
     },
 
-    mounted() {
+    async mounted() {
+        await this.getNamesFrench()
         this.get20Pokemons()
-        this.getNamesFrench()
+        
     },
 
 }

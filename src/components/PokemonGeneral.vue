@@ -1,13 +1,17 @@
 <template>
   <section id="header">
-    <button class="language" @click="changeLanguage">Language</button>
-    <h1 class="yellow">Pokedex</h1>
+    <section id="language">
+    <img src="../assets/France.png" alt="the french flag" class="languageFlag" @click="this.$data.language = 'fr'" v-bind:class="{ selected: (language === 'fr') }" /> 
+    <span></span>
+    <img src="../assets/UK.png" alt="the flag of the UK" class="languageFlag" @click="this.$data.language = 'en'" v-bind:class="{ selected: (language === 'en') }"/>
+    </section>
+     <h1 class="yellow">Pokedex</h1>
   </section>
     <!-- If the user wants to see the detail of a pokemon, then the component pokemon_detail is shown, else pokemon_list 
         the id of the pokemon that the user wants to see is then passed onto our detail page via the getPokemonId method 
         the switching between the two pages is done by verifying if the variable detail is true (showing detail page) or false (showing list)-->
-    <pokemon_list v-if="this.$data.detail === false" @getPokemonId="getPokemonId" @getPokemonName="getPokemonName" v-bind:language="language" />
-    <pokemon_detail v-else :id="id" @finishedDetail="finishedDetail" :language="language" :frenchName="frenchName"/>
+    <pokemon_list v-if="this.$data.detail === false"  @getPokemonInfo="getPokemonInfo" :language="language" />
+    <pokemon_detail v-else  @finishedDetail="finishedDetail" :language="language" :pokemonInfo="pokemonInfo"/>
 </template>
 
 <script>
@@ -21,9 +25,8 @@ export default {
   data() {
     return {
       detail : false,
-      id : 0,
       language : 'en',
-      frenchName : ''
+      pokemonInfo : ''
     }
   },
   components: {
@@ -31,12 +34,9 @@ export default {
     pokemon_detail
   },
   methods: {
-    getPokemonId(id) {
-      this.$data.id = id;
-      this.getDetails();
-    },
-    getPokemonName(name) {
-      this.$data.frenchName = name;
+    getPokemonInfo(pokemon) {
+      this.$data.pokemonInfo = pokemon;
+      this.$data.detail = true;
     },
     //setting detail = true to show the detail page
     getDetails() {
