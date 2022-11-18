@@ -191,8 +191,8 @@ export default {
             //if the current language is english
             if (this.$props.language === 'en') {
                 this.$data.current = this.$data.En;
-                this.pokemon.species = this.pokemonInfo.species
-                this.pokemon.name = this.pokemonInfo.name
+                this.pokemon.species = this.$props.pokemonNames[this.$data.pokemon.id].species
+                this.pokemon.name = this.$props.pokemonNames[this.$data.pokemon.id].englishName
             }
             //if the current language is french
             else {
@@ -214,8 +214,8 @@ export default {
                         this.$data.pokemon.types[index].type.frenchName = frtype.names[3].name;
                     }
                 }
-                this.pokemon.species = this.pokemonInfo.espece
-                this.pokemon.name = this.pokemonInfo.frenchName
+                this.pokemon.species = this.$props.pokemonNames[this.$data.pokemon.id].espece
+                this.pokemon.name = this.$props.pokemonNames[this.$data.pokemon.id].frenchName
             }
         }
 
