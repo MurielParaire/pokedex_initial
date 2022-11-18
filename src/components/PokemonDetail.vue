@@ -48,8 +48,6 @@
                     </p>
                 </div>
 
-                <!--
-                <div id="evolutions" v-for="id in this.$data.evolutionsIds" :key="id">{{ id }}</div>-->
             </div>
             <img :src="this.$data.pokemon.url" alt="An image of {{this.$data.pokemon.name}}" id="detailImage" />
 
@@ -66,19 +64,22 @@
 
 
             <section id="evolutions">
-            <article
-                v-for="pokemon in this.$data.pokemon.evolution"
-                :key="pokemon.id">
-                    <li>
-                        <div class="evolutionsContainer" 
-                        v-bind:id=pokemon.name >
-                            <img :src="pokemon.url"  />
+            <h2>Evolutions :</h2>
+                <ul class="evolution" >
+                    <article 
+                    v-for="pokemon in this.$data.pokemon.evolution"
+                    :key="pokemon.id" class="evolutionsContainer" :class="pokemon.first" @click="this.getPokemon(pokemon.id)"  >
+                    <li v-if="this.$data.pokemon.evolution.length > 1">
+                        <div >
+                            <img :src="pokemon.url"  :alt="'image of ' + pokemon.name" />
                             <p class='textId'>id : {{ pokemon.id }}</p>
                             <h1 v-if="this.$props.language === 'en'" >{{ pokemon.name }}</h1>
                             <h1 v-else >{{ pokemon.frenchName }}</h1>
-                        </div> 
+                            </div> 
                     </li>
-                </article></section>
+                    </article>
+                </ul>
+            </section>
 
         </section>
 
@@ -112,8 +113,8 @@ export default {
         },
 
         //charging our pokemon
-        async getPokemon() {
-            let pokemon = await P.getPokemonByName(this.$props.pokemonInfo.id).catch((err) => console.log(err));
+        async getPokemon(id) {
+            let pokemon = await P.getPokemonByName(id).catch((err) => console.log(err));
             let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
             p.weight = pokemon.weight;
             p.abilities = [];
@@ -128,6 +129,7 @@ export default {
             });
             this.$data.pokemon = p;
             this.getEvolutionChain(pokemon.id);
+            this.changeLanguage()
         },
 
         async getEvolutionChain(id) {
@@ -141,36 +143,41 @@ export default {
             let evolutions = await fetch(evolutionUrl).catch((err) => console.log(err));
             evolutions = await evolutions.json()
             this.$data.pokemon.evolution = []
-            let evol = {'id': this.getId(evolutions.chain.species.url), 'name': evolutions.chain.species.name}
+            let evol = {'id': this.getId(evolutions.chain.species.url), 'name': evolutions.chain.species.name, 'first': 'firstEvol'}
             evol.url = this.getUrl(evol.id)
+            evol.frenchName = this.$props.pokemonNames[evol.id].frenchName
             this.$data.pokemon.evolution.push(evol)        
             this.getNextEvolutionRecursive(evolutions.chain)
-            console.log('hy')
-            console.log(this.$data.pokemon.evolution)
         },
 
         getNextEvolutionRecursive(object) {
             if ('evolves_to' in object && object.evolves_to.length > 0) {
                 for (let counter = 0; counter < object.evolves_to.length; counter++) {
-                    let evol = {'id': this.getId(object.evolves_to[counter].species.url), 'name': object.evolves_to[counter].species.name}
+                    let evol = {'id': this.getId(object.evolves_to[counter].species.url), 'name': object.evolves_to[counter].species.name, 'first': 'otherEvol'}
                     evol.url = this.getUrl(evol.id);
-                    console.log("evol")
-                    console.log(evol)
+                    evol.frenchName = this.$props.pokemonNames[evol.id].frenchName
                     this.$data.pokemon.evolution.push(evol) 
                     this.getNextEvolutionRecursive(object.evolves_to[counter])
                 }
             }
         },
 
+        /**
+         * @description a function that extracts the id of the pokemon from an url
+         * @param {string} url
+         * @returns  id (string)
+         */
         getId(url) {
-            console.log('y')
-            console.log(url)
-            let y = url
             url = url.replaceAll('/', '')
             url = url.replace('https:pokeapi.coapiv2pokemon-species', '')
             return url
         },
 
+        /**
+         * @description a function returning the url of the pokemon
+         * @param {int} id
+         * @returns  (string) : the url of the pokemon
+         */
         getUrl(id) {
             return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + id + '.png'
         },
@@ -215,7 +222,8 @@ export default {
         },
         pokemonInfo: {
             required: true
-        }
+        }, 
+        pokemonNames: {}
     },
     watch: {
         language: function() {
@@ -223,8 +231,48 @@ export default {
         }
     },
     async mounted() {
-        await this.getPokemon()
-        this.changeLanguage()
+        await this.getPokemon(this.$props.pokemonInfo.id)
     }
 }
 </script>
+
+
+<style scoop>
+.evolutionsContainer {
+    max-width: fit-content;
+    max-height: fit-content;
+}
+
+.evolutionsContainer li {
+    border: 0;
+    background-color: transparent;
+}
+.evolutionsContainer div {
+    background-color: transparent;
+}
+
+.evolution {
+    margin-top: 5%;
+    background-color: transparent;
+    display: grid;
+    column-gap: 15px;
+    row-gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(20px, 15%));
+    justify-content: space-evenly;
+    justify-items: center;
+    border: 0;
+}
+
+#evolutions {
+    grid-row: span 3;
+    grid-column: span 2;
+        
+}
+
+h2 {
+    text-align: left;
+    background-color: transparent;
+    margin-top: 4%;
+}
+
+</style>

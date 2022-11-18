@@ -1,22 +1,6 @@
 <template>
-    <!-- search -->
-    <section class="search" v-if="this.$props.language === 'en'">
-        <!-- return button -->
-        <button v-if="this.$data.inSpecific === true" @click="finishedSearch" class="return">Return</button>
-        <!-- search bar -->
-        <input id='searchbar' type="text" placeholder="Pikachu" v-model="search">
-        <!-- search button => enter information from the search bar -->
-        <button id="searchButton" @click=this.searchPokemon()>Search</button>
-    </section>
-    <section class="search" v-else>
-        <!-- return button -->
-        <button @click="finishedSearch" v-if="this.$data.inSpecific === true" class="return">Retour</button>
-        <!-- search bar -->
-        <input id='searchbar' type="text" placeholder="Artikodin" v-model="search">
-        <!-- search button => enter information from the search bar -->
-        <button id="searchButton" @click=this.searchPokemon()>Chercher</button>
-    </section>
-    
+
+    <search_bar :language="language" @searchPokemon="searchPokemon" :inSpecific="inSpecific" @finishedSearch="finishedSearch" />
     <!-- pokemon list -->
     <section class="pokemons content">
             <ul id="pokemonList">
@@ -29,7 +13,7 @@
                         <div class="container" 
                         v-bind:id=pokemon.name 
                         v-bind:class=pokemon.types[0].type.name>
-                            <img :src="pokemon.url"  />
+                            <img :src="pokemon.url" :alt="'image of ' + pokemon.name" />
                             <p class='textId'>id : {{ pokemon.id }}</p>
                             <h1 v-if="this.$props.language === 'en'" >{{ pokemon.name }}</h1>
                             <h1 v-else >{{ pokemon.frenchName }}</h1>
@@ -39,7 +23,7 @@
             </ul>
     </section>
     <!-- button to add 20 pokemons at the end of our list -->
-    <div v-if="this.$data.inSpecific === false">
+    <div v-if="this.$data.inSpecific === false && this.$data.loading === false">
         <button class='addPokemonButton' id='addPokemon' @click=this.get20Pokemons() v-if="this.$props.language === 'en'" >Click to add more pokemon's !</button>
         <button class='addPokemonButton' id='addPokemon' @click=this.get20Pokemons() v-else >Ajouter des pokemons !</button>
     </div>
@@ -54,8 +38,9 @@ const Pokedex = require("pokeapi-js-wrapper")
 const P = new Pokedex.Pokedex();
 //import our pokemon class
 import Pokemon from '../Pokemon.js'
-//import csv to json
-import csvToJson from 'csvtojson';
+
+//import the search bar component
+import search_bar from './Searchbar.vue'
 
 
 //export our app
@@ -65,7 +50,11 @@ export default {
     props : {
         language : {
             required: true
-        }
+        },
+        pokemonNames : {}
+    },
+    components: {
+        search_bar
     },
     data() {
         return {
@@ -77,10 +66,10 @@ export default {
             id: 0,
             //the content of the search bar
             search: '',
-            //the names of the pokemon in french and english
-            pokemonNames : [['no pokemon with 0 exists', 'pas de pokemon avec id 0 existe']],
             //to know if we have searched a specific pokemon or are in the overall list
-            inSpecific : false
+            inSpecific : false,
+            //to stop users from spamming the button
+            loading : false
         }
     },
     methods: {
@@ -90,6 +79,7 @@ export default {
         },
         //gets the next 20 pokemon from the api
         async get20Pokemons() {
+            this.$data.loading = true;
             //if the user has searched for a pokemon, we need to clear the list before adding the first 20 or it will appear twice
             if (this.$data.pokemonList.length < 20) {
                 this.$data.pokemonList = [];
@@ -111,35 +101,32 @@ export default {
                 let data = await fetchResult.json();
                 this.getPokemon(data);
             }
-            this.updateOffset()
-            this.getNamesFrench()
+            this.updateOffset();
+            this.$data.loading = false;
         },
         
         getPokemon(response) {
-            if (this.$data.pokemonNames.length < 2) {
-                this.getNamesFrench()
-            }
-            console.log(response.id)
             let p = new Pokemon(response.id, response.name, response.types, response.sprites.other["official-artwork"].front_default);
-            p.frenchName = this.$data.pokemonNames[response.id].frenchName
+            if (this.$props.pokemonNames.length > p.id) {
+                p.frenchName = this.$props.pokemonNames[p.id].frenchName
+            }
             this.$data.pokemonList.push(p);
         },
 
         setPokemonId(pokemon) {
-            pokemon.espece = this.$data.pokemonNames[pokemon.id].espece;
-            pokemon.species = this.$data.pokemonNames[pokemon.id].species;
+            pokemon.espece = this.$props.pokemonNames[pokemon.id].espece;
+            pokemon.species = this.$props.pokemonNames[pokemon.id].species;
             this.$emit('getPokemonInfo', pokemon)
         },
 
-        async searchPokemon() {
-            let name = this.$data.search.toLowerCase() ;
+        async searchPokemon(name) {
             if (name === '') {
                 return 0
             }
             let x = parseInt(name)
             if (this.$props.language === 'fr') {
                 if (x.toString() === 'NaN') {
-                    var result = this.$data.pokemonNames.find(n => {
+                    var result = this.$props.pokemonNames.find(n => {
                         return n.frenchName === name;
                     })
                     if (result === undefined) {
@@ -150,7 +137,7 @@ export default {
             }
             let pokemon = await P.getPokemonByName(name).catch((err) => console.log(err));
             let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
-            p.frenchName = this.$data.pokemonNames[p.id].frenchName
+            p.frenchName = this.$props.pokemonNames[p.id].frenchName
             this.$data.pokemonList = [p];
             this.$data.offset = 0;
             this.$data.inSpecific = true
@@ -159,38 +146,14 @@ export default {
         finishedSearch() {
             this.$data.inSpecific = false
             this.get20Pokemons()
-        },
-
-        async getNamesFrench() {
-            let names = await fetch("https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_species_names.csv").catch((err) => console.log(err))
-            let res = await names.text()
-            const json = await csvToJson({
-                delimiter: ','
-            }).fromString(res);
-            let name = {}
-            for (let counter = 0; counter < json.length; counter++) {
-                //get good lines
-                
-                if (json[counter].local_language_id === '5') {
-                    name = {'id': json[counter].pokemon_species_id, 'frenchName': json[counter].name.toLowerCase(), 'espece': json[counter].genus };
-                }
-                else if (json[counter].local_language_id === '9') {
-                    name.englishName = json[counter].name.toLowerCase() ;
-                    name.species = json[counter].genus;
-                }
-                else if (json[counter].local_language_id === '11') {
-                    this.$data.pokemonNames.push(name);
-                    name = {}
-                }
-            }
         }
+
+
 
     },
 
     async mounted() {
-        await this.getNamesFrench()
         this.get20Pokemons()
-        
     },
 
 }
