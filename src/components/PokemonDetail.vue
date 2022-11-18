@@ -77,6 +77,10 @@
                             <h1 v-else >{{ pokemon.frenchName }}</h1>
                             </div> 
                     </li>
+                    <li v-else >
+                        <p v-if="this.props.language === 'en'">This pokemon doesn't evolve</p>
+                        <p v-else>Ce pokémon n'évolue pas</p>
+                    </li>
                     </article>
                 </ul>
             </section>
