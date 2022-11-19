@@ -17,6 +17,7 @@
 
             <div id="generalInformation">
 
+                <!-- general Information about the pokemon -->
                 <div id="general">
                     <p class="species"><span class='attributes'> {{this.$data.current[0]}} : </span>{{ pokemon.species }}</p>
                     <p class='weight'><span class='attributes'>{{this.$data.current[1]}} : </span> {{ pokemon.weight }} kg</p>
@@ -26,12 +27,14 @@
                     <p class='height'><span class='attributes'>{{this.$data.current[3]}} : </span> {{ pokemon.height }} m</p>
                 </div>
                 <br>
+                <!-- statistics of the pokemon -->
                 <div id="stats">
                     <div v-for="(stat, index) in this.$data.pokemon.stats" :key="stat[0]" :id="stat[0]">
                         <p ><span class='attributes'>{{ this.$data.current[4 + index] }} : </span> {{ stat[1] }}</p>
                     </div>
                 </div>
                 <br>
+                <!-- attributes of the pokemon -->
                 <div v-if="this.$props.language === 'en'" id="specific">
                     <p><span class='attributes specificattr'> {{this.$data.current[this.$data.current.length - 1]}} : </span>
                     <ul v-for="ability in this.$data.pokemon.abilities" :key="ability" class="ability">
@@ -39,7 +42,6 @@
                     </ul>
                     </p>
                 </div>
-
                 <div v-if="this.$props.language === 'fr'" id="specific">
                     <p><span class='attributes specificattr'> {{this.$data.current[this.$data.current.length - 1]}} : </span>
                     <ul v-for="ability in this.$data.pokemon.frenchAbilities" :key="ability" class="ability">
@@ -49,8 +51,9 @@
                 </div>
 
             </div>
+            <!-- image of the pokemon -->
             <img :src="this.$data.pokemon.url" alt="An image of {{this.$data.pokemon.name}}" id="detailImage" />
-
+            <!-- types of the pokemon -->
             <section id="types" v-if="this.$props.language === 'en'">
                 <div v-for="type in this.$data.pokemon.types" :key="type">
                     <span class="type" v-bind:class=type.type.name>{{ type.type.name }}</span>
@@ -62,7 +65,7 @@
                 </div>
             </section>
 
-
+            <!-- evolution/s of the pokemon -->
             <section id="evolutions">
             <h2>Evolutions :</h2>
                 <ul class="evolution" >
@@ -111,12 +114,16 @@ export default {
         }
     },
     methods: {
-        //telling the parent component (PokemonGeneral) that the user has finished looking at the detail page
+        /**
+        ** @description telling the parent component (PokemonGeneral) that the user has finished looking at the detail page
+        */
         finishedDetail() {
             this.$emit('finishedDetail');
         },
 
-        //charging our pokemon
+        /**
+        ** @description charging our pokemon
+        */
         async getPokemon(id) {
             let pokemon = await P.getPokemonByName(id).catch((err) => console.log(err));
             let p = new Pokemon(pokemon.id, pokemon.name, pokemon.types, pokemon.sprites.other["official-artwork"].front_default);
@@ -132,18 +139,19 @@ export default {
                 p.stats.push([stat.stat.name, stat.base_stat]);
             });
             this.$data.pokemon = p;
-            this.getEvolutionChain(pokemon.id);
+            //getting all the evolutions of the pokemon
+            this.getEvolutions(pokemon.id);
+            //charging the french and english names of the pokemon and his abilities
             this.changeLanguage()
         },
 
-        async getEvolutionChain(id) {
+        /**
+        ** @description get all the evolution/s of the pokemon if he has any
+        ** @param {int} id: the id of the pokemon 
+        */
+        async getEvolutions(id) {
             let evolutionChain = await P.getPokemonSpeciesByName(id).catch((err) => console.log(err));
             let evolutionUrl = evolutionChain.evolution_chain.url
-            this.getEvolutions(evolutionUrl, id)
-        },
-
-
-        async getEvolutions(evolutionUrl, id) {
             let evolutions = await fetch(evolutionUrl).catch((err) => console.log(err));
             evolutions = await evolutions.json()
             this.$data.pokemon.evolution = []
@@ -154,6 +162,10 @@ export default {
             this.getNextEvolutionRecursive(evolutions.chain)
         },
 
+        /**
+        ** @description add the next evolution (if there is any) to the evolutions of the pokemon
+        ** @param object: the object that contains the next evolution 
+        */
         getNextEvolutionRecursive(object) {
             if ('evolves_to' in object && object.evolves_to.length > 0) {
                 for (let counter = 0; counter < object.evolves_to.length; counter++) {
@@ -169,7 +181,7 @@ export default {
         /**
          * @description a function that extracts the id of the pokemon from an url
          * @param {string} url
-         * @returns  id (string)
+         * @returns {string} id 
          */
         getId(url) {
             url = url.replaceAll('/', '')
@@ -186,7 +198,9 @@ export default {
             return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + id + '.png'
         },
 
-        //changing the variables to the good ones for the current language
+        /** 
+         * @description changing the variables to the good ones for the current language
+         */
         async changeLanguage() {
             //if the current language is english
             if (this.$props.language === 'en') {
@@ -229,6 +243,7 @@ export default {
         }, 
         pokemonNames: {}
     },
+    //watching for changes of the language
     watch: {
         language: function() {
             this.changeLanguage()

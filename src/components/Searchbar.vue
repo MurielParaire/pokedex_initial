@@ -1,5 +1,4 @@
 <template>
-        <!-- search -->
         <section class="search" v-if="this.$props.language === 'en'">
         <!-- return button -->
         <button v-if="this.$props.inSpecific === true" @click="finishedSearch" class="return">Return</button>
@@ -38,9 +37,16 @@ export default {
         }
     },
     methods: {
+        /**
+         * @description telling our parent / list component the content of the searchbar
+         */
         searchPokemon() {
             this.$emit('searchPokemon', this.search.toLowerCase());
         },
+
+        /**
+         * @description telling our parent / list component that the user has finished searching for a pokemon and wants to return to the default page
+         */
         finishedSearch() {
             this.$emit('finishedSearch')
         }
