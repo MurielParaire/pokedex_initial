@@ -20,6 +20,9 @@ import pokemon_list from  './PokemonList.vue';
 import pokemon_detail from './PokemonDetail.vue';
 //import csv to json
 import csvToJson from 'csvtojson';
+//import the pokeapiwrapper
+const Pokedex = require("pokeapi-js-wrapper")
+const P = new Pokedex.Pokedex();
 
 //export our app 
 export default {
@@ -38,19 +41,32 @@ export default {
     pokemon_detail
   },
   methods: {
+    /**
+    * @description a function setting the information of the pokemon
+    * @param {pokemon} pokemon : the pokemon the user wants to view
+    */
     getPokemonInfo(pokemon) {
       this.$data.pokemonInfo = pokemon;
       this.$data.detail = true;
     },
-    //setting detail = true to show the detail page
+
+    /**
+    * @description setting detail = true to show the detail page
+    */
     getDetails() {
       this.$data.detail = true;
     },
-    //setting detail = false to show the list page
+
+    /**
+    * @description setting detail = false to show the list page
+    */
     finishedDetail() {
       this.$data.detail = false;
     },
 
+    /**
+    * @description get the csv with the translation of all pokemons
+    */
     async getNamesFrench() {
             let names = await fetch("https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_species_names.csv").catch((err) => console.log(err))
             let res = await names.text()
@@ -59,22 +75,24 @@ export default {
             }).fromString(res);
             let name = {}
             for (let counter = 0; counter < json.length; counter++) {
-                //get good lines
-                
+                //get the lines we need
+                //language id 5 = french
                 if (json[counter].local_language_id === '5') {
                     name = {'id': json[counter].pokemon_species_id, 'frenchName': json[counter].name.toLowerCase(), 'espece': json[counter].genus };
                 }
+                //language id 9 = english
                 else if (json[counter].local_language_id === '9') {
                     name.englishName = json[counter].name.toLowerCase() ;
                     name.species = json[counter].genus;
-                }
-                else if (json[counter].local_language_id === '11') {
                     this.$data.pokemonNames.push(name);
                     name = {}
                 }
             }
         },
 
+    /**
+    * @description change the language
+    */
     changeLanguage() {
       if (this.$data.language === 'en') {
         this.$data.language = 'fr';
@@ -84,7 +102,9 @@ export default {
       }
     }
   },
+
   async mounted() {
+    //for the best user experience we need to be able to switch to french at any time and therefore need the translation for the pokemon names to be loaded.
     await this.getNamesFrench()
   }
 
